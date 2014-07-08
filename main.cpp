@@ -8,14 +8,22 @@ struct range
 {
     value_t m_begin;
     value_t m_end;
+    bool m_reverse;
 
     range (value_t begin, value_t end) : m_begin (begin), m_end (end)
     {
+        m_reverse = m_end < m_begin;
+    }
+
+    range (value_t end) : m_begin (value_t()), m_end (end)
+    {
+        m_reverse = m_end < m_begin;
     }
     
     struct iterator 
     {
         value_t value;
+        bool reverse;
         const value_t& operator *()
         {
             return value;
@@ -23,7 +31,10 @@ struct range
         
         iterator& operator++()
         {
-            ++value;
+            if (reverse)
+                --value;
+            else
+                ++value;
             return *this;
         }
         
@@ -35,12 +46,12 @@ struct range
     
     iterator begin ()
     {
-        return iterator{m_begin};
+        return iterator{m_begin, m_reverse};
     } 
     
     iterator end ()
     {
-        return iterator{m_end};
+        return iterator{m_end, m_reverse};
     }
     
     template <typename collection_t> 
@@ -57,11 +68,11 @@ struct range
 
 int main ()
 {
-    for (int n : range<int>(0, 10))
+    for (int n : range<int>(10))
     {
         std::cout << n << std::endl;
     }
-    std::vector<int> x = range<int>(100, 110);
+    std::vector<int> x = range<int>(200, 190);
 
     for (int n : x)
     {
