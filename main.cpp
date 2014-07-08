@@ -42,6 +42,17 @@ struct range
     {
         return iterator{m_end};
     }
+    
+    template <typename collection_t> 
+    operator collection_t ()
+    {
+        collection_t c;
+        for (auto n : *this)
+        {
+            c.push_back(n);
+        }
+        return c;        
+    }
 };
 
 int main ()
@@ -50,6 +61,11 @@ int main ()
     {
         std::cout << n << std::endl;
     }
-    auto r = range<int>(0, 8);
- //   std::vector<int> x(r.begin(), r.end());  
+    std::vector<int> x = range<int>(100, 110);
+
+    for (int n : x)
+    {
+        std::cout << n << std::endl;
+    }
+
 }
