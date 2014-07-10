@@ -91,6 +91,39 @@ struct generate_itr
         m_output_expr(output_expr), m_range(range), m_predictate(predictate)
     {
     }
+
+    struct iterator 
+    {
+        value_t value;
+        const value_t& operator *()
+        {
+            return value;
+        } 
+        
+        iterator& operator++()
+        {
+            if (reverse)
+                --value;
+            else
+                ++value;
+            return *this;
+        }
+        
+        bool operator != (const iterator& that)
+        {
+            return value != that.value;
+        }
+    };
+    
+    iterator begin ()
+    {
+        return iterator{m_begin, m_reverse};
+    } 
+    
+    iterator end ()
+    {
+        return iterator{m_end, m_reverse};
+    }
     
     template <typename collection_t> 
     operator collection_t ()
