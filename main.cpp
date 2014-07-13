@@ -102,10 +102,6 @@ struct generate_itr
         
         iterator& operator++()
         {
-            if (reverse)
-                --value;
-            else
-                ++value;
             return *this;
         }
         
