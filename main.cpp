@@ -5,55 +5,52 @@
 #include <algorithm>
 #include <functional>
 
-template <typename value_t> 
-struct range_itr 
+template <typename value_t>
+struct range_itr
 {
     typedef value_t value_type;
 
     value_t m_begin;
     value_t m_end;
-    bool m_reverse;
+    value_t m_inc;
 
-    range_itr (value_t begin, value_t end) : m_begin (begin), m_end (end)
+    range_itr (value_t begin, value_t end, value_t increment) : m_begin (begin), m_end (end), m_inc (increment)
     {
-        m_reverse = m_end < m_begin;
     }
-    
-    struct iterator 
+
+    struct iterator
     {
         value_t value;
-        bool reverse;
+        value_t increment;
+
         const value_t& operator *()
         {
             return value;
-        } 
-        
+        }
+
         iterator& operator++()
         {
-            if (reverse)
-                --value;
-            else
-                ++value;
+            value += increment;
             return *this;
         }
-        
+
         bool operator != (const iterator& that)
         {
-            return value != that.value;
+            return
         }
     };
-    
+
     iterator begin ()
     {
-        return iterator{m_begin, m_reverse};
-    } 
-    
+        return iterator{m_begin, m_inc};
+    }
+
     iterator end ()
     {
-        return iterator{m_end, m_reverse};
+        return iterator{m_end, m_inc};
     }
-    
-    template <typename collection_t> 
+
+    template <typename collection_t>
     operator collection_t ()
     {
         collection_t c;
@@ -61,30 +58,35 @@ struct range_itr
         {
             c.push_back(n);
         }
-        return c;        
+        return c;
     }
 };
 
+template <typename value_t>
+inline range_itr<value_t> range (value_t begin, value_t end, value_t increment)
+{
+    return range_itr<value_t> (begin, end, increment);
+}
 
 template <typename value_t>
 inline range_itr<value_t> range (value_t begin, value_t end)
 {
-    return range_itr<value_t> (begin, end);
-} 
+    return range_itr<value_t> (begin, end, value_t(1));
+}
 
 template <typename value_t>
 inline range_itr<value_t> range (value_t end)
 {
-    return range_itr<value_t> (0, end);
-} 
+    return range_itr<value_t> (0, end, value_t(1));
+}
 
 template <typename output_expr_t, typename range_t, typename predictate_t>
 struct generate_itr
 {
-    output_expr_t m_output_expr; 
+    output_expr_t m_output_expr;
     range_t m_range;
-    predictate_t m_predictate; 
-    
+    predictate_t m_predictate;
+
     typedef typename range_t::value_type value_t;
 
     generate_itr (output_expr_t output_expr, range_t range, predictate_t predictate) :
@@ -92,53 +94,53 @@ struct generate_itr
     {
     }
 
-    struct iterator 
+    struct iterator
     {
         value_t value;
         const value_t& operator *()
         {
             return value;
-        } 
-        
+        }
+
         iterator& operator++()
         {
             return *this;
         }
-        
+
         bool operator != (const iterator& that)
         {
             return value != that.value;
         }
     };
-    
+
     iterator begin ()
     {
-        return iterator{m_begin, m_reverse};
-    } 
-    
+        return iterator{};
+    }
+
     iterator end ()
     {
-        return iterator{m_end, m_reverse};
+        return iterator{};
     }
-    
-    template <typename collection_t> 
+
+    template <typename collection_t>
     operator collection_t ()
     {
         collection_t c;
         for (auto n : m_range)
         {
-            if (m_predictate(n)) 
+            if (m_predictate(n))
                 c.push_back(m_output_expr(n));
         }
-        return c;        
-    } 
+        return c;
+    }
 };
 
 template <typename output_expr_t, typename range_t, typename predictate_t>
 generate_itr<output_expr_t, range_t, predictate_t> generate (output_expr_t expr, range_t r, predictate_t p)
 {
     return generate_itr<output_expr_t, range_t, predictate_t> (expr, r, p);
-}                                                     
+}
 
 int main ()
 {
@@ -152,7 +154,7 @@ int main ()
     {
         std::cout << n << std::endl;
     }
-    
+
     std::vector<int> test = generate ([](int x){ return x * 2;}, range (10), [](int x){ return x & 1; });
 
     for (int n : test)
@@ -160,4 +162,3 @@ int main ()
         std::cout << n << std::endl;
     }
 }
-    
