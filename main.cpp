@@ -36,7 +36,10 @@ struct range_itr
 
         bool operator != (const iterator& that)
         {
-            return
+            if (increment < value_t())
+                return that.value < value;
+            else 
+                return value < that.value;
         }
     };
 
@@ -71,13 +74,16 @@ inline range_itr<value_t> range (value_t begin, value_t end, value_t increment)
 template <typename value_t>
 inline range_itr<value_t> range (value_t begin, value_t end)
 {
-    return range_itr<value_t> (begin, end, value_t(1));
+    if (end < begin)
+        return range_itr<value_t> (begin, end, -value_t(1));
+    else
+        return range_itr<value_t> (begin, end, value_t(1));
 }
 
 template <typename value_t>
 inline range_itr<value_t> range (value_t end)
 {
-    return range_itr<value_t> (0, end, value_t(1));
+    return range (value_t(0), end);    
 }
 
 template <typename output_expr_t, typename range_t, typename predictate_t>
@@ -144,21 +150,24 @@ generate_itr<output_expr_t, range_t, predictate_t> generate (output_expr_t expr,
 
 int main ()
 {
-    for (int n : range(10))
+    for (auto n : range(0.0, 10.0, 1.1))
     {
         std::cout << n << std::endl;
     }
-    std::list<int> x = range(200, 190);
+    
+    std::list<double> x = range(200.0, 190.0, -0.9);
 
-    for (int n : x)
+    for (auto n : x)
     {
         std::cout << n << std::endl;
     }
 
+/*
     std::vector<int> test = generate ([](int x){ return x * 2;}, range (10), [](int x){ return x & 1; });
 
     for (int n : test)
     {
         std::cout << n << std::endl;
     }
+    */
 }
