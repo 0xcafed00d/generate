@@ -23,6 +23,16 @@ int main ()
         std::cout << n << std::endl;
     }
 
+
+    auto r = range(10);
+    
+    std::vector<int> v (r.begin(), r.end());
+    for (auto n : v)
+    {
+        std::cout << n << std::endl;
+    }
+
+
 /*
     std::vector<int> test = generate ([](int x){ return x * 2;}, range (10), [](int x){ return x & 1; });
 

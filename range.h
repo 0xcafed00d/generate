@@ -1,6 +1,8 @@
 #ifndef SIMULATED_SIMIAN_RANGE_H_INCLUDED
 #define SIMULATED_SIMIAN_RANGE_H_INCLUDED
 
+#include <iterator>
+
 
 template <typename value_t>
 struct range_impl
@@ -18,6 +20,12 @@ struct range_impl
 
     struct iterator
     {
+        typedef std::input_iterator_tag iterator_category;
+        typedef value_t value_type;
+        typedef value_t difference_type;
+        typedef value_t* pointer;
+        typedef value_t& reference;
+    
         value_t value;
         value_t increment;
 
