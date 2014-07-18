@@ -8,7 +8,6 @@
 #include "range.h"
 #include "generate.h"
 
-
 int main ()
 {
     for (auto n : range(0.0, 10.0, 1.1))
