@@ -1,3 +1,0 @@
-#!/bin/bash
-
-clang++ -Wall -std=c++11 -fexceptions *.cpp 
