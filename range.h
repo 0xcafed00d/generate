@@ -49,12 +49,12 @@ struct range_impl
         }
     };
 
-    iterator begin ()
+    iterator begin () const 
     {
         return iterator{m_begin, m_inc};
     }
 
-    iterator end ()
+    iterator end () const
     {
         return iterator{m_end, m_inc};
     }

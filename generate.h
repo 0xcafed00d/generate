@@ -66,17 +66,10 @@ struct generate_impl
 };
 
 template <typename output_expr_t, typename range_t, typename predictate_t>
-generate_impl<output_expr_t, range_t, predictate_t> generate (output_expr_t expr, range_t r, predictate_t p)
+generate_impl<output_expr_t, range_t, predictate_t> generate (output_expr_t expr, range_t r, 
+                            predictate_t p = [](const typename range_t::value_type&){return true;})
 {
     return generate_impl<output_expr_t, range_t, predictate_t> (expr, r, p);
-}
-
-template <typename output_expr_t, typename range_t>
-generate_impl<output_expr_t, range_t> generate (output_expr_t expr, range_t r)
-{
-    static auto true_predictate = [](const range_t::value_type&){return true;};
-
-    return generate_impl<output_expr_t, range_t, predictate_t> (expr, r, true_predictate);
 }
 
 
