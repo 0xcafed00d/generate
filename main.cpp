@@ -12,6 +12,8 @@
 template <typename collection_t>
 void dump_collection (const collection_t& c)
 {
+    std::cout << "-----------------------" << std::endl;
+
     for (auto n : c)
     {
         std::cout << n << std::endl;
@@ -33,12 +35,8 @@ int main ()
     std::vector<int> v (r.begin(), r.end());
     dump_collection (v);
     
-/*
-    std::vector<int> test = generate ([](int x){ return x * 2;}, range (10), [](int x){ return x & 1; });
 
-    for (int n : test)
-    {
-        std::cout << n << std::endl;
-    }
-    */
+    std::vector<int> test = generate ([](int x){ return x * 2;}, range (10), [](int x){ return x & 1; });
+    dump_collection (test);
+    
 }

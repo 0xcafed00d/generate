@@ -25,14 +25,17 @@ struct generate_impl
         typedef value_t* pointer;
         typedef value_t& reference;
 
-        value_t value;
+        generate_impl& gen;
+        range_t::iterator itr;
+
         const value_t& operator *()
         {
-            return value;
+            return gen.m_output_expr (*itr);
         }
 
         iterator& operator++()
         {
+            while(
             return *this;
         }
 
@@ -44,12 +47,12 @@ struct generate_impl
 
     iterator begin ()
     {
-        return iterator{};
+        return iterator{*this, m_range.begin()};
     }
 
     iterator end ()
     {
-        return iterator{};
+        return iterator{*this, m_range.end()};
     }
 
     template <typename collection_t>
