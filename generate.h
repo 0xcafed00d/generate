@@ -3,17 +3,18 @@
 
 #include <iterator>
 
-template <typename output_expr_t, typename range_t, typename predictate_t>
+template <typename output_expr_t, typename range_itr_t, typename predictate_t>
 struct generate_impl
 {
     output_expr_t m_output_expr;
-    range_t m_range;
+    range_itr_t m_range_from;
+    range_itr_t m_range_to;
     predictate_t m_predictate;
 
-    typedef typename range_t::value_type value_t;
+    typedef typename range_itr_t::value_type value_t;
 
-    generate_impl (output_expr_t output_expr, range_t range, predictate_t predictate) :
-        m_output_expr(output_expr), m_range(range), m_predictate(predictate)
+    generate_impl (output_expr_t output_expr, range_itr_t range_from, range_itr_t range_to, predictate_t predictate) :
+        m_output_expr(output_expr), m_range_from(range_from), m_range_to(range_to), m_predictate(predictate)
     {
     }
 
@@ -26,8 +27,7 @@ struct generate_impl
         typedef value_t& reference;
 
         generate_impl& gen;
-        typename range_t::iterator itr;
-        value_t value;
+        range_itr_t itr;
 
         value_t operator *()
         {
@@ -36,7 +36,7 @@ struct generate_impl
 
         iterator& operator++()
         {
-            while (++itr != gen.m_range.end() && !gen.m_predictate(*itr)) 
+            while (++itr != gen.m_range_to && !gen.m_predictate(*itr))
                 ;
             return *this;
         }
@@ -45,41 +45,48 @@ struct generate_impl
         {
             return itr != that.itr;
         }
+
+        bool operator == (const iterator& that)
+        {
+            return itr == that.itr;
+        }
     };
 
     iterator begin ()
     {
-        auto itr = m_range.begin();
-        while (itr != m_range.end() && !m_predictate(*itr)) 
+        auto itr = m_range_from;
+        while (itr != m_range_to && !m_predictate(*itr))
             ++itr;
-                            
+
         return iterator{*this, itr};
     }
 
     iterator end ()
     {
-        return iterator{*this, m_range.end()};
+        return iterator{*this, m_range_to};
     }
+
 
     template <typename collection_t>
     operator collection_t ()
     {
         collection_t c;
-        for (auto n : m_range)
+        for (auto i = m_range_from; m_range_from != m_range_to; ++i)
         {
-            if (m_predictate(n))
-                c.push_back(m_output_expr(n));
+            if (m_predictate(*i))
+                c.push_back(m_output_expr(*i));
         }
         return c;
     }
+    
 };
 
 template <typename output_expr_t, typename range_t, typename predictate_t>
-generate_impl<output_expr_t, range_t, predictate_t> generate (output_expr_t expr, range_t r, 
-                            predictate_t p = [](const typename range_t::value_type&){return true;})
+auto generate (output_expr_t expr, const range_t& r,
+               predictate_t p = [](const typename range_t::value_type&){return true;}) -> generate_impl<output_expr_t, decltype (r.begin()), predictate_t>
 {
-    return generate_impl<output_expr_t, range_t, predictate_t> (expr, r, p);
+    typedef decltype (r.begin()) range_itr_t;
+    return generate_impl<output_expr_t, range_itr_t, predictate_t> (expr, r.begin(), r.end(), p);
 }
-
 
 #endif

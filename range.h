@@ -3,7 +3,6 @@
 
 #include <iterator>
 
-
 template <typename value_t>
 struct range_impl
 {
@@ -46,6 +45,11 @@ struct range_impl
                 return that.value < value;
             else 
                 return value < that.value;
+        }
+
+        bool operator == (const iterator& that)
+        {
+            return !(*this += that);
         }
     };
 
