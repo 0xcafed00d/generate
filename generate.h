@@ -26,28 +26,34 @@ struct generate_impl
         typedef value_t& reference;
 
         generate_impl& gen;
-        range_t::iterator itr;
+        typename range_t::iterator itr;
+        value_t value;
 
-        const value_t& operator *()
+        value_t operator *()
         {
             return gen.m_output_expr (*itr);
         }
 
         iterator& operator++()
         {
-            while(
+            while (++itr != gen.m_range.end() && !gen.m_predictate(*itr)) 
+                ;
             return *this;
         }
 
         bool operator != (const iterator& that)
         {
-            return value != that.value;
+            return itr != that.itr;
         }
     };
 
     iterator begin ()
     {
-        return iterator{*this, m_range.begin()};
+        auto itr = m_range.begin();
+        while (itr != m_range.end() && !m_predictate(*itr)) 
+            ++itr;
+                            
+        return iterator{*this, itr};
     }
 
     iterator end ()
