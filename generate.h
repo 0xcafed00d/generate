@@ -71,7 +71,7 @@ struct generate_impl
     operator collection_t ()
     {
         collection_t c;
-        for (auto i = m_range_from; m_range_from != m_range_to; ++i)
+        for (auto i = m_range_from; i != m_range_to; ++i)
         {
             if (m_predictate(*i))
                 c.push_back(m_output_expr(*i));
