@@ -81,12 +81,26 @@ struct generate_impl
     
 };
 
+template <typename value_t>
+bool true_predictate (const value_t&) 
+{
+    return true;
+}
+
 template <typename output_expr_t, typename range_t, typename predictate_t>
-auto generate (output_expr_t expr, const range_t& r,
-               predictate_t p = [](const typename range_t::value_type&){return true;}) -> generate_impl<output_expr_t, decltype (r.begin()), predictate_t>
+auto generate (output_expr_t expr, const range_t& r, predictate_t p) 
+                   -> generate_impl<output_expr_t, decltype (r.begin()), predictate_t>
 {
     typedef decltype (r.begin()) range_itr_t;
     return generate_impl<output_expr_t, range_itr_t, predictate_t> (expr, r.begin(), r.end(), p);
+}
+
+template <typename output_expr_t, typename range_t>
+auto generate (output_expr_t expr, const range_t& r) 
+                   -> generate_impl<output_expr_t, decltype (r.begin()), 
+                      decltype (&true_predictate<typename range_t::value_type>)>
+{
+    return generate(expr, r, true_predictate<typename range_t::value_type>);
 }
 
 #endif

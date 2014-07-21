@@ -1,9 +1,12 @@
+
 #include <iostream>
 #include <vector>
 #include <list>
 #include <string>
 #include <algorithm>
 #include <functional>
+#include <cctype>
+
 
 #include "range.h"
 #include "generate.h"
@@ -38,8 +41,14 @@ int main ()
 
     dump_collection (test);
 
-    for (auto n : generate ([](int x){ return x * x;}, range (10), [](int x){ return x & 1; }))
+    for (auto n : generate ([](int x){ return x * x;}, test))
     {
         std::cout << n << " ";
     }
+    
+    std::string s = generate ([](char c){return std::toupper(c);}, std::string("hello world"), 
+                              [](char c){return c != ' ';});    
+
+    std::cout << std::endl << s << std::endl;
+    
 }
