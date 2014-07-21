@@ -38,8 +38,8 @@ int main ()
 
     dump_collection (test);
 
-//    for (auto n : generate ([](int x){ return x * x;}, range (10), [](int x){ return x & 1; }))
+    for (auto n : generate ([](int x){ return x * x;}, range (10), [](int x){ return x & 1; }))
     {
-        //std::cout << n << " ";
+        std::cout << n << " ";
     }
 }
