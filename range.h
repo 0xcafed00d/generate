@@ -2,6 +2,7 @@
 #define SIMULATED_SIMIAN_RANGE_H_INCLUDED
 
 #include <iterator>
+#include <iostream>
 
 template <typename value_t>
 struct range_impl
@@ -15,6 +16,12 @@ struct range_impl
     range_impl (value_t begin, value_t end, value_t increment) 
         : m_begin (begin), m_end (end), m_inc (increment)
     {
+        std::cout << "range CTOR " << this << std::endl;
+    }
+
+    ~range_impl ()
+    {
+        std::cout << "range DTOR " << this << std::endl;        
     }
 
     struct iterator
