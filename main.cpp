@@ -20,23 +20,74 @@ void dump_collection (const collection_t& c)
     std::cout << std::endl;
 }
 
-template <typename value_t>
-const value_t& to_ref (const value_t& v)
+template <typename collection_t>
+struct as_ref_impl
 {
-    return v;
+    const collection_t& col;
+    
+    as_ref_impl (const collection_t& c) : col(c) {}
+    
+    typedef typename collection_t::value_type value_type;
+    typedef decltype (col.begin()) iterator;
+    
+    iterator begin() 
+    {
+        return col.begin();
+    }
+    
+    iterator end()
+    {
+        return col.end();
+    } 
+};
+
+template <typename collection_t>
+as_ref_impl<collection_t> as_ref (const collection_t& v)
+{
+    return as_ref_impl<collection_t>{v};
 }
 
 void reftest ()
 {
+/*
     std::cout << "----------------" << std::endl;
-    range_impl<int> r = range(10);
-
-    for (auto n : generate ([](int x){ return x * x;}, to_ref(r)))
+    
+    auto t1 = range(10);
+    auto t2 = as_ref(range(10));
+    
+    std::cout << typeid(t1).name() << std::endl;   
+    std::cout << typeid(t2).name() << std::endl;
+    
+    for (auto n : t2)
     {
         std::cout << n << " ";
     }
+    
+ */    
+    std::cout << std::endl << "----------------" << std::endl;
+ 
+    {       
+        range_impl<int> r = range(5);
+    
+        for (auto n : generate ([](int x){ return x * x;}, as_ref(r)))
+        {
+            std::cout << n << std::endl;
+        }
+    }
 
-    std::cout << "----------------" << std::endl;
+    std::cout << std::endl << "----------------" << std::endl;
+
+    {       
+        range_impl<int> r = range(5);
+    
+        for (auto n : generate ([](int x){ return x * x;}, r))
+        {
+            std::cout << n << std::endl;
+        }
+    }
+
+    std::cout << std::endl << "----------------" << std::endl;
+
 }
 
 int main ()
@@ -59,7 +110,7 @@ int main ()
 
     dump_collection (test);
 
-    for (auto n : generate ([](int x){ return x * x;}, to_ref(test)))
+    for (auto n : generate ([](int x){ return x * x;}, test))
     {
         std::cout << n << " ";
     }

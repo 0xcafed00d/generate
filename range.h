@@ -19,6 +19,12 @@ struct range_impl
         std::cout << "range CTOR " << this << std::endl;
     }
 
+    range_impl (const range_impl& that) 
+    {
+        *this = that;
+        std::cout << "range copy CTOR " << this << std::endl;
+    }
+
     ~range_impl ()
     {
         std::cout << "range DTOR " << this << std::endl;        
